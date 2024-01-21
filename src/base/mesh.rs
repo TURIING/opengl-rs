@@ -30,7 +30,7 @@ impl Default for MeshVertex {
 
 #[derive(Clone)]
 pub struct MeshTexture {
-    pub tex: Texture,
+    pub tex: Box<Texture>,
     pub type_: String,
     pub path: String,
 }
@@ -92,7 +92,7 @@ impl Mesh {
             let sampler = format!("{}{}", name, number);
             program.set_int(&sampler, i as i32)?;
             
-            gl::BindTexture(gl::TEXTURE_2D, texture.tex.get_id());
+            gl::BindTexture(gl::TEXTURE_2D, texture.tex.id());
         }
 
         self.vao.bind();

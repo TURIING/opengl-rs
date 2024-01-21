@@ -11,7 +11,7 @@ use std::rc::Rc;
 use base::error::GLError;
 use base::camera::Camera;
 
-pub trait RendererInterface: Sized {
+pub trait IRenderer: Sized {
     // 绘制前处理
     unsafe fn pre_draw(&self) -> Result<(), GLError> { Ok(()) }
     // 绘制

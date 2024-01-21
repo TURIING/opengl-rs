@@ -4,7 +4,7 @@
 use std::{rc::Rc, cell::RefCell};
 use nalgebra_glm as glm;
 
-use crate::{RendererInterface, base::{program::ShaderProgram, buffer::Buffer, vertex_array::VertexArray, camera::Camera}, set_attribute};
+use crate::{IRenderer, base::{program::ShaderProgram, buffer::Buffer, vertex_array::VertexArray, camera::Camera}, set_attribute};
 
 const VERTEX_SOURCE_FILE: &str = "glsl/sphere/vertex.glsl";
 const FRAGMENT_SOURCE_FILE: &str = "glsl/sphere/fragment.glsl";
@@ -96,7 +96,7 @@ impl Sphere {
     }
 }
 
-impl RendererInterface for Sphere {
+impl IRenderer for Sphere {
     unsafe fn draw(&self) -> Result<(), crate::base::error::GLError> {
         self.clear();
 
@@ -114,7 +114,7 @@ impl RendererInterface for Sphere {
 
         let model = glm::identity::<f32, 4>();
         self.program.set_mat4("model", glm::value_ptr::<f32, 4, 4>(&model))?;
-        
+
         gl::DrawArrays(gl::LINE_LOOP, 0, 6 * 60 * 120); 
 
         Ok(())

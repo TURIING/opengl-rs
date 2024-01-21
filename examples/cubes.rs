@@ -5,7 +5,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use opengl_rs::RendererInterface;
+use opengl_rs::IRenderer;
 use opengl_rs::base::camera::Camera;
 use opengl_rs::base::engine::Engine;
 use opengl_rs::advance::cube::Cube;
@@ -50,7 +50,7 @@ impl Cubes {
     }
 }
 
-impl RendererInterface for Cubes {
+impl IRenderer for Cubes {
     // 绘制
     unsafe fn draw(&self) -> Result<(), GLError> {
         self.clear();

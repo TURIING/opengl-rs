@@ -1,8 +1,8 @@
 use glfw::{WindowHint, OpenGlProfileHint, WindowMode, Context, CursorMode, WindowEvent, Key, Action, GlfwReceiver, };
 
-use crate::{RendererInterface, base::{error::GLError, camera::CameraMovement}};
+use crate::{IRenderer, base::{error::GLError, camera::CameraMovement}};
 
-pub struct Engine<T: RendererInterface> {
+pub struct Engine<T: IRenderer> {
     renderer: T,
     glfw: glfw::Glfw,
     window: glfw::PWindow,
@@ -14,7 +14,7 @@ pub struct Engine<T: RendererInterface> {
     cursor_pos: (f32, f32),                                     // 记录鼠标的位置
 }
 
-impl<T: RendererInterface> Engine<T> {
+impl<T: IRenderer> Engine<T> {
     pub fn new<F: Fn() -> Result<T, GLError>>(win_title: &str, size: (u32, u32), act: F) -> Result<Self, GLError> {
         let mut glfw = glfw::init_no_callbacks()?;
         glfw.window_hint(WindowHint::ContextVersion(3, 3));

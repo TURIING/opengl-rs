@@ -25,7 +25,7 @@ impl Model {
     /**
      * load_field: 需要加载的纹理项
      */
-    pub fn new(path: &str, load_field: &[MaterialType]) -> Result<Self, ModelError> {
+    pub fn new(path: &str, load_field: Option<&[MaterialType]>) -> Result<Self, ModelError> {
         let mut model = Model::default();
         model.loadModel(path, load_field)?;
         Ok(model)
@@ -38,7 +38,7 @@ impl Model {
         Ok(())
     }
 
-    fn loadModel(&mut self, path: &str, load_field: &[MaterialType]) -> Result<(), ModelError> {
+    fn loadModel(&mut self, path: &str, load_field: Option<&[MaterialType]>) -> Result<(), ModelError> {
         let path = Path::new(path);
 
         self.directory = path.parent().unwrap_or_else(|| Path::new("")).to_str().unwrap().into();
@@ -67,25 +67,27 @@ impl Model {
             if let Some(id) = mesh.material_id {
                 let material = &materials[id];
 
-                // diffuse map
-                if load_field.contains(&MaterialType::Diffuse) && material.diffuse_texture.is_some() {
-                    let path = format!("{}/{}", self.directory, material.diffuse_texture.clone().unwrap());
-                    let texture = self.loadMaterialTexture(path, "texture_diffuse")?;
-                    textures.push(texture);
-                }
+                if let Some(load_field) = load_field {
+                    // diffuse map
+                    if load_field.contains(&MaterialType::Diffuse) && material.diffuse_texture.is_some() {
+                        let path = format!("{}/{}", self.directory, material.diffuse_texture.clone().unwrap());
+                        let texture = self.loadMaterialTexture(path, "texture_diffuse")?;
+                        textures.push(texture);
+                    }
 
-                // specular map
-                if load_field.contains(&MaterialType::Specular) && material.specular_texture.is_some() {
-                    let path = format!("{}/{}", self.directory, material.specular_texture.clone().unwrap());
-                    let texture = self.loadMaterialTexture(path, "texture_specular")?;
-                    textures.push(texture);
-                }
+                    // specular map
+                    if load_field.contains(&MaterialType::Specular) && material.specular_texture.is_some() {
+                        let path = format!("{}/{}", self.directory, material.specular_texture.clone().unwrap());
+                        let texture = self.loadMaterialTexture(path, "texture_specular")?;
+                        textures.push(texture);
+                    }
 
-                // normal map
-                if load_field.contains(&MaterialType::Normal) && material.normal_texture.is_some() {
-                    let path = format!("{}/{}", self.directory, material.normal_texture.clone().unwrap());
-                    let texture = self.loadMaterialTexture(path, "texture_normal")?;
-                    textures.push(texture);
+                    // normal map
+                    if load_field.contains(&MaterialType::Normal) && material.normal_texture.is_some() {
+                        let path = format!("{}/{}", self.directory, material.normal_texture.clone().unwrap());
+                        let texture = self.loadMaterialTexture(path, "texture_normal")?;
+                        textures.push(texture);
+                    }
                 }
             }
 
@@ -102,7 +104,7 @@ impl Model {
         }
 
         let texture = MeshTexture{
-            tex: unsafe { Texture::new(&path, gl::REPEAT, gl::LINEAR)? },
+            tex: Box::new(Texture::new(&path, gl::REPEAT, gl::REPEAT, gl::LINEAR, gl::LINEAR)?),
             type_: typeName.into(),
             path, 
         };

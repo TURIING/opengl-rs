@@ -5,7 +5,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use opengl_rs::RendererInterface;
+use opengl_rs::IRenderer;
 use opengl_rs::base::camera::Camera;
 use opengl_rs::base::engine::Engine;
 use opengl_rs::advance::sphere::Sphere;
@@ -35,7 +35,7 @@ impl Spheres {
     }
 }
 
-impl RendererInterface for Spheres {
+impl IRenderer for Spheres {
     // 绘制
     unsafe fn draw(&self) -> Result<(), GLError> {
         self.clear();

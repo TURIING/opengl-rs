@@ -4,7 +4,7 @@
 use std::{rc::Rc, cell::RefCell};
 use nalgebra_glm as glm;
 
-use crate::{RendererInterface, base::{program::ShaderProgram, buffer::Buffer, vertex_array::VertexArray, texture::Texture, camera::Camera}, set_attribute};
+use crate::{IRenderer, base::{program::ShaderProgram, buffer::Buffer, vertex_array::VertexArray, texture::Texture, camera::Camera}, set_attribute};
 
 const VERTEX_SOURCE_FILE: &str = "glsl/cube/vertex.glsl";
 const FRAGMENT_SOURCE_FILE: &str = "glsl/cube/fragment.glsl";
@@ -86,10 +86,10 @@ impl Cube {
         set_attribute!(vertex_array, tex_attr, Vertex::1);
 
         // 纹理
-        let texture_0 = Texture::new(image.0, gl::REPEAT, gl::LINEAR)?;
+        let texture_0 = Texture::new(image.0, gl::REPEAT, gl::REPEAT, gl::LINEAR, gl::LINEAR)?;
         program.set_int("texture1", 0)?;
 
-        let texture_1 = Texture::new(image.1, gl::REPEAT, gl::LINEAR)?;
+        let texture_1 = Texture::new(image.1, gl::REPEAT, gl::REPEAT, gl::LINEAR, gl::LINEAR)?;
         program.set_int("texture2", 1)?;
 
         let renderer = Self {
@@ -107,7 +107,7 @@ impl Cube {
     }
 }
 
-impl RendererInterface for Cube {
+impl IRenderer for Cube {
     unsafe fn draw(&self) -> Result<(), crate::base::error::GLError> {
         self.clear();
         self.texture_0.activate(gl::TEXTURE0);
@@ -132,8 +132,7 @@ impl RendererInterface for Cube {
             self.program.set_mat4("model", glm::value_ptr::<f32, 4, 4>(&model))?;
 
             gl::DrawArrays(gl::TRIANGLES, 0, 36);
-        }
-        
+        }        
 
         Ok(())
     }
